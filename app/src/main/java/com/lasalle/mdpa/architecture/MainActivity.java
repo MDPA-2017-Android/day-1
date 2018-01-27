@@ -5,51 +5,35 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.lasalle.mdpa.architecture.model.Library;
-import com.lasalle.mdpa.architecture.model.Movie;
-import com.lasalle.mdpa.architecture.model.TvShow;
+import com.lasalle.mdpa.architecture.manager.LibraryManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Library library;
+    private LibraryManager libraryManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        library = new Library();
+        libraryManager = new LibraryManager();
 
         PopulateMoviesList();
         PopulateTvShowsList();
     }
 
     private void PopulateMoviesList() {
-        List<Movie> movieList = library.getMovieList();
-
-        List<String> movieTitleList = new ArrayList<String>();
-        for (Movie m : movieList) {
-            movieTitleList.add(m.getTitle());
-        }
-
         ListView movieListView = (ListView) findViewById(R.id.movie_list);
-        PopulateListView(movieListView, movieTitleList);
+        PopulateListView(movieListView, libraryManager.getMovieTitleList());
     }
 
 
     private void PopulateTvShowsList() {
-        List<TvShow> showList = library.getTvShowList();
-
-        List<String> tvShowTitleList = new ArrayList<String>();
-        for (TvShow s : showList) {
-            tvShowTitleList.add(s.getTitle());
-        }
-
         ListView tvShowListView = (ListView) findViewById(R.id.shows_list);
-        PopulateListView(tvShowListView, tvShowTitleList);
+        PopulateListView(tvShowListView, libraryManager.getTvShowTitleList());
     }
 
     private void PopulateListView(ListView listView, List<String> items) {

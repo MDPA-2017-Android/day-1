@@ -1,35 +1,40 @@
-package com.lasalle.mdpa.architecture.model;
+package com.lasalle.mdpa.architecture.manager;
+
+import com.lasalle.mdpa.architecture.model.Movie;
+import com.lasalle.mdpa.architecture.model.TvShow;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Library {
+public class LibraryManager {
 
     private List<Movie> movieList;
     private List<TvShow> tvShowList;
 
-    public Library() {
-        FillMovieList();
-        FillTvShowList();
+    public LibraryManager() {
+        fillMovieList();
+        fillTvShowList();
     }
 
-    public List<Movie> getMovieList() {
-        return movieList;
+    public List<String> getMovieTitleList() {
+        List<String> movieTitleList = new ArrayList<String>();
+        for (Movie m : movieList) {
+            movieTitleList.add(m.getTitle());
+        }
+
+        return movieTitleList;
     }
 
-    public void setMovieList(List<Movie> movieList) {
-        this.movieList = movieList;
+    public List<String> getTvShowTitleList() {
+        List<String> tvShowTitleList = new ArrayList<String>();
+        for (TvShow s : tvShowList) {
+            tvShowTitleList.add(s.getTitle());
+        }
+
+        return tvShowTitleList;
     }
 
-    public List<TvShow> getTvShowList() {
-        return tvShowList;
-    }
-
-    public void setTvShowList(List<TvShow> tvShowList) {
-        this.tvShowList = tvShowList;
-    }
-
-    private void FillMovieList() {
+    private void fillMovieList() {
         movieList = new ArrayList<Movie>();
         movieList.add(new Movie("Inception", "Christopher Nolan", 2010));
         movieList.add(new Movie("Star Wars IV – A New Hope (1977)", "George Lucas", 1977));
@@ -42,7 +47,7 @@ public class Library {
         movieList.add(new Movie("Mad Max: Fury Road", "George Miller", 2015));
     }
 
-    private void FillTvShowList() {
+    private void fillTvShowList() {
         tvShowList = new ArrayList<TvShow>();
         tvShowList.add(new TvShow("Sons of Anarchy", true, 7));
         tvShowList.add(new TvShow("Breaking Bad", true, 5));
