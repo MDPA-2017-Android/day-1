@@ -27,8 +27,7 @@ public class LibraryManager {
 
     private Resources resources;
 
-    public LibraryManager(Resources resources) {
-        this.resources = resources;
+    public LibraryManager() {
         fillMovieListFromFile();
         fillTvShowListFromFile();
     }
@@ -49,6 +48,10 @@ public class LibraryManager {
         }
 
         return tvShowTitleList;
+    }
+
+    public void setResources(Resources resources) {
+        this.resources = resources;
     }
 
     private void fillMovieListFromFile() {
