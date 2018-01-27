@@ -20,10 +20,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Fill Movies
         List<String> movieList = new ArrayList<String>();
-        movieList.add("Origin");
+        movieList.add("Inception");
         movieList.add("Star Wars IV – A New Hope (1977)");
-        movieList.add("V – The Empire Strikes Back (1980)");
-        movieList.add("VI – Return of the Jedi (1983)");
+        movieList.add("Star Wars V – The Empire Strikes Back (1980)");
+        movieList.add("Star Wars VI – Return of the Jedi (1983)");
         movieList.add("Lord of the rings - The Two Towers");
         movieList.add("The Greatest Showman");
         movieList.add("The Godfather");
