@@ -1,8 +1,22 @@
 package com.lasalle.mdpa.architecture.manager;
 
+import android.content.res.Resources;
+import android.util.Log;
+
+import com.lasalle.mdpa.architecture.R;
 import com.lasalle.mdpa.architecture.model.Movie;
 import com.lasalle.mdpa.architecture.model.TvShow;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,9 +25,12 @@ public class LibraryManager {
     private List<Movie> movieList;
     private List<TvShow> tvShowList;
 
-    public LibraryManager() {
-        fillMovieList();
-        fillTvShowList();
+    private Resources resources;
+
+    public LibraryManager(Resources resources) {
+        this.resources = resources;
+        fillMovieListFromFile();
+        fillTvShowListFromFile();
     }
 
     public List<String> getMovieTitleList() {
@@ -34,29 +51,76 @@ public class LibraryManager {
         return tvShowTitleList;
     }
 
-    private void fillMovieList() {
-        movieList = new ArrayList<Movie>();
-        movieList.add(new Movie("Inception", "Christopher Nolan", 2010));
-        movieList.add(new Movie("Star Wars IV – A New Hope (1977)", "George Lucas", 1977));
-        movieList.add(new Movie("Star Wars V – The Empire Strikes Back (1980)", "Irvin Kershner", 1980));
-        movieList.add(new Movie("Star Wars VI – Return of the Jedi (1983)", "Richard Marquand", 1983));
-        movieList.add(new Movie("Lord of the rings - The Two Towers", "Peter Jackson", 2002));
-        movieList.add(new Movie("The Greatest Showman", "Michael Gracey", 2017));
-        movieList.add(new Movie("The Godfather", "Francis Ford Coppola", 1972));
-        movieList.add(new Movie("The Fast and the Furious", "Rob Cohen", 2001));
-        movieList.add(new Movie("Mad Max: Fury Road", "George Miller", 2015));
+    private void fillMovieListFromFile() {
+        try {
+            String jsonContent = readJsonFile(R.raw.movies);
+            if(jsonContent.isEmpty()) {
+                return;
+            }
+
+            movieList = new ArrayList<Movie>();
+            JSONArray jsonArray = new JSONArray(jsonContent);
+            for(int index = 0; index < jsonArray.length(); ++index)
+            {
+                JSONObject jsonObject = jsonArray.getJSONObject(index);
+                String title = jsonObject.getString("title");
+                String director = jsonObject.getString("director");
+                int releaseYear = jsonObject.getInt("release");
+
+                movieList.add(new Movie(title, director, releaseYear));
+            }
+        }
+        catch (Exception e) {
+            Log.e(this.getClass().getName(), e.getMessage());
+        }
     }
 
-    private void fillTvShowList() {
-        tvShowList = new ArrayList<TvShow>();
-        tvShowList.add(new TvShow("Sons of Anarchy", true, 7));
-        tvShowList.add(new TvShow("Breaking Bad", true, 5));
-        tvShowList.add(new TvShow("Dexter", true, 8));
-        tvShowList.add(new TvShow("Luther", false, 4));
-        tvShowList.add(new TvShow("Game of Thrones", false, 7));
-        tvShowList.add(new TvShow("Lie to Me", true, 3));
-        tvShowList.add(new TvShow("Big bang theory", false, 11));
-        tvShowList.add(new TvShow("Modern Family", false,9));
-        tvShowList.add(new TvShow("The Man in the High Castle", false, 2));
+    private void fillTvShowListFromFile() {
+        try {
+            String jsonContent = readJsonFile(R.raw.tvshows);
+            if(jsonContent.isEmpty()) {
+                return;
+            }
+
+            tvShowList = new ArrayList<TvShow>();
+            JSONArray jsonArray = new JSONArray(jsonContent);
+            for(int index = 0; index < jsonArray.length(); ++index)
+            {
+                JSONObject jsonObject = jsonArray.getJSONObject(index);
+                String title = jsonObject.getString("title");
+                boolean ended = jsonObject.getBoolean("ended");
+                int seasons = jsonObject.getInt("seasons");
+
+                tvShowList.add(new TvShow(title, ended, seasons));
+            }
+        }
+        catch (Exception e) {
+            Log.e(this.getClass().getName(), e.getMessage());
+        }
+    }
+
+    private String readJsonFile(int file) {
+        InputStream is = resources.openRawResource(file);
+        Writer writer = new StringWriter();
+        char[] buffer = new char[1024];
+        try {
+            Reader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+            int n;
+            while ((n = reader.read(buffer)) != -1) {
+                writer.write(buffer, 0, n);
+            }
+        }
+        catch (Exception e) {
+            Log.e(this.getClass().getName(), e.getMessage());
+        } finally {
+            try {
+                is.close();
+            } catch (IOException e) {
+                Log.e(this.getClass().getName(), e.getMessage());
+            }
+        }
+
+        String jsonString = writer.toString();
+        return jsonString;
     }
 }
