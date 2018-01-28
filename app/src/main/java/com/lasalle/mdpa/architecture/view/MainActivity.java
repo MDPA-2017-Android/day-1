@@ -1,44 +1,38 @@
 package com.lasalle.mdpa.architecture.view;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.lasalle.mdpa.architecture.R;
-import com.lasalle.mdpa.architecture.view.model.ActivityViewModel;
 import com.lasalle.mdpa.architecture.view.model.LibraryViewModel;
-import com.lasalle.mdpa.architecture.view.model.ListObserver;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityViewModel libraryViewModel;
+    private LibraryViewModel libraryViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        libraryViewModel = new LibraryViewModel(getResources());
+        libraryViewModel = ViewModelProviders.of(this).get(LibraryViewModel.class);
 
-        libraryViewModel.subscribeMovieListChanges(new ListObserver() {
-            @Override
-            public void onListItemsChanged(List items) {
-                ListView movieListView = (ListView) findViewById(R.id.movie_list);
-                populateListView(movieListView, items);
-            }
+        libraryViewModel.setResources(getResources());
+
+        libraryViewModel.getMovieTitleList().observe(this, movieTitleList -> {
+            ListView movieListView = (ListView) findViewById(R.id.movie_list);
+            populateListView(movieListView, movieTitleList);
         });
 
-        libraryViewModel.subscribeTvShowListChanges(new ListObserver() {
-            @Override
-            public void onListItemsChanged(List items) {
-                ListView tvShowListView = (ListView) findViewById(R.id.shows_list);
-                populateListView(tvShowListView, items);
-            }
+        libraryViewModel.getTvShowTitleList().observe(this, tvShowList -> {
+            ListView tvShowListView = (ListView) findViewById(R.id.shows_list);
+            populateListView(tvShowListView, tvShowList);
         });
-
-        libraryViewModel.onViewCreated();
     }
 
     private void populateListView(ListView listView, List<String> items) {

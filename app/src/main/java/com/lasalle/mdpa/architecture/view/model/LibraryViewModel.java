@@ -1,5 +1,8 @@
 package com.lasalle.mdpa.architecture.view.model;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModel;
 import android.content.res.Resources;
 
 import com.lasalle.mdpa.architecture.manager.LibraryManager;
@@ -9,52 +12,55 @@ import com.lasalle.mdpa.architecture.model.TvShow;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class LibraryViewModel implements ActivityViewModel {
+public class LibraryViewModel extends ViewModel {
 
     private LibraryManager libraryManager = new LibraryManager();
 
-    private ListObserver movieListObserver;
-    private ListObserver tvShowListObserver;
+    private MutableLiveData<List<String>> movieTitleList;
+    private MutableLiveData<List<String>> tvShowTitleList;
 
-    public LibraryViewModel(Resources resources)
+    public void setResources(Resources resources)
     {
         libraryManager.setResources(resources);
     }
 
-    @Override
-    public void onViewCreated() {
-        populateMovieList();
-        populateTvShowList();
+    public LiveData<List<String>> getMovieTitleList() {
+        if(movieTitleList == null) {
+            movieTitleList = new MutableLiveData<>();
+            populateMovieList();
+        }
+
+        return movieTitleList;
     }
 
-    @Override
-    public void subscribeMovieListChanges(ListObserver observer) {
-        movieListObserver = observer;
-    }
+    public LiveData<List<String>> getTvShowTitleList() {
+        if(tvShowTitleList == null) {
+            tvShowTitleList = new MutableLiveData<>();
+            populateTvShowList();
+        }
 
-    @Override
-    public void subscribeTvShowListChanges(ListObserver observer) {
-        tvShowListObserver = observer;
+        return tvShowTitleList;
     }
 
     private void populateMovieList() {
         List<Movie> movieList = libraryManager.getMovieList();
-        List<String> movieTitleList = new ArrayList<String>();
+
+        List<String> titleList = new ArrayList<>();
         for (Movie m : movieList) {
-            movieTitleList.add(m.getTitle());
+            titleList.add(m.getTitle());
         }
 
-        movieListObserver.onListItemsChanged(movieTitleList);
+        movieTitleList.setValue(titleList);
     }
 
     private void populateTvShowList() {
         List<TvShow> tvShowList = libraryManager.getTvShowList();
-        List<String> tvShowTitleList = new ArrayList<String>();
+
+        List<String> titleList = new ArrayList<>();
         for (TvShow s : tvShowList) {
-            tvShowTitleList.add(s.getTitle());
+            titleList.add(s.getTitle());
         }
 
-        tvShowListObserver.onListItemsChanged(tvShowTitleList);
+        tvShowTitleList.setValue(titleList);
     }
 }
