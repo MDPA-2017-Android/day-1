@@ -14,13 +14,13 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ActivityViewModel libraryViewModel = new LibraryViewModel(getResources());
+    private ActivityViewModel libraryViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        libraryViewModel.onViewCreated();
+        libraryViewModel = new LibraryViewModel(getResources());
 
         libraryViewModel.subscribeMovieListChanges(new ListObserver() {
             @Override
@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
                 populateListView(tvShowListView, items);
             }
         });
+
+        libraryViewModel.onViewCreated();
     }
 
     private void populateListView(ListView listView, List<String> items) {

@@ -32,26 +32,18 @@ public class LibraryManager {
         fillTvShowListFromFile();
     }
 
-    public List<String> getMovieTitleList() {
-        List<String> movieTitleList = new ArrayList<String>();
-        for (Movie m : movieList) {
-            movieTitleList.add(m.getTitle());
-        }
-
-        return movieTitleList;
+    public List<Movie> getMovieList() {
+        return movieList;
     }
 
-    public List<String> getTvShowTitleList() {
-        List<String> tvShowTitleList = new ArrayList<String>();
-        for (TvShow s : tvShowList) {
-            tvShowTitleList.add(s.getTitle());
-        }
-
-        return tvShowTitleList;
+    public List<TvShow> getTvShowList() {
+        return tvShowList;
     }
 
     public void setResources(Resources resources) {
         this.resources = resources;
+        fillMovieListFromFile();
+        fillTvShowListFromFile();
     }
 
     private void fillMovieListFromFile() {
